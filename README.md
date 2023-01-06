@@ -17,4 +17,6 @@ main :: proc() {
 }
 ```
 
-![example](./images/example.png)
+Debugger output:  
+
+<img src="./images/example.png" width="400rem"/>
