@@ -138,10 +138,13 @@ debugger_logger_proc :: proc(logger_data: rawptr, level: log.Level, text: string
         h = data.file_handle
     }
 
-    //backing: [1024]byte //NOTE(Hoej): 1024 might be too much for a header backing, unless somebody has really long paths.
+    // (original) NOTE(Hoej): 1024 might be too much for a header backing, unless somebody has really long paths.
     MAX_HEADER_SIZE :: 1024
 
-    backing := make(T=[]byte, len=MAX_HEADER_SIZE+len(text)+1, allocator=context.temp_allocator)
+    // OutputDebugStringW is thread safe, but in order to do a single call we must to print everything in to a single buffer.
+    // (The original code would have forced us to do multiple calls, or allocate a 3rd time with concatenate())
+    max_length := MAX_HEADER_SIZE + len(text) + 1 /* "\n" */
+    backing := make(T=[]byte, len=max_length, allocator=context.temp_allocator)
     { 
         // Console print
         buf := strings.builder_from_bytes(backing[:])
@@ -162,7 +165,6 @@ debugger_logger_proc :: proc(logger_data: rawptr, level: log.Level, text: string
         assert(strings.builder_len(buf) <= MAX_HEADER_SIZE)
         fmt.sbprintf(&buf, "%s\n", text)
 
-        // OutputDebugStringW is thread safe, I used  a single builder to call this in a single call.
         win32.OutputDebugStringW(win32.utf8_to_wstring(strings.to_string(buf)))
     }
 }
