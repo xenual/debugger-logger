@@ -153,7 +153,8 @@ debugger_logger_proc :: proc(logger_data: rawptr, level: log.Level, text: string
         //TODO(Hoej): When we have better atomics and such, make this thread-safe
         fmt.fprint(h, strings.to_string(buf))
     }
-    {
+
+    when ODIN_DEBUG {
         // Debugger print
         buf := strings.builder_from_bytes(backing[:]) // 2nd time resets builder
 
