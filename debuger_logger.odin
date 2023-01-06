@@ -1,5 +1,6 @@
 package main
 
+import "core:os"
 import win32 "core:sys/windows"
 
 //
@@ -31,7 +32,6 @@ win32_open_console_or_attach_to_parent :: proc(open_console :bool = true) {
 
 import "core:fmt"
 import "core:strings"
-import "core:os"
 import "core:runtime"
 import "core:time"
 import "core:log"
@@ -167,7 +167,7 @@ debugger_logger_proc :: proc(logger_data: rawptr, level: log.Level, text: string
 }
 
 //
-// This from core:log/file_console_logger.odin[file_console_logger_proc], I extracted the formatting code to make it stream-idependent.
+// This from core:log/file_console_logger.odin[file_console_logger_proc], I extracted the formatting code to make it stream-independent.
 // 
 buffer_format_header_from_opts:: proc(buf: ^strings.Builder, logger_data: rawptr, level: log.Level, text: string, options: log.Options, location := #caller_location) {
     data := cast(^log.File_Console_Logger_Data)logger_data
